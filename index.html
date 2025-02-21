@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ermina & Fabri Baby List</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"></script>
+    <style>
+        body {font-family: Arial, sans-serif; margin: 20px; background-color: #9DC183; color: white;}
+        h1 {font-size: 24px; }
+        table { width: 100%; border-collapse: collapse; font-size: 16px; /* Text font size */}
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: white; /* Header */ color: #738561; font-weight: bold; }
+	th:nth-child(1), td:nth-child(1) { width: 35%; }
+        th:nth-child(2), td:nth-child(2) { width: 45%; }
+        th:nth-child(3), td:nth-child(3) { width: 20%; }
+        button { background-color: white; color: black; border: none; padding: 10px 20px; cursor: pointer; }
+        button:hover { background-color: #ddd; }
+	img { max-width: 100%; height: auto; /* Maintain aspect ratio */ display: block; margin: 0 auto; }
+	@media (max-width: 768px) { table, th, td { width: 100%; display: block; }
+            th, td { text-align: right; }
+            td { margin-bottom: 10px; }
+            button { width: 100%; /* Make button span full width */ }
+        }
+    </style>
+</head>
+<body>
+    <h1>Ermina & Fabri Baby List</h1>
+    <table id="babyListTable">
+        <tr>
+            <th>Picture</th>
+            <th>Description & Link</th>
+            <th>Action</th>
+        </tr>
+    </table>
+
+    <script>
+	const firebaseConfig = {
+  	    apiKey: "AIzaSyBWX8vPV34KkkHOZBTp280xgBpr7j7uOtA",
+            authDomain: "babylistef.firebaseapp.com",
+  	    databaseURL: "https://babylistef-default-rtdb.europe-west1.firebasedatabase.app",
+	    projectId: "babylistef",
+	    storageBucket: "babylistef.firebasestorage.app",
+	    messagingSenderId: "603347821148",
+	    appId: "1:603347821148:web:043ec755b52b2ca617fc99",
+	    measurementId: "G-L3FYK9K6EV"
+	};
+
+    	// Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Reference to the 'babyList' node in Firebase
+        const babyListRef = database.ref("babylist");
+
+	// Function to load baby list items dynamically
+        function loadBabyList() {
+            babyListRef.on("value", (snapshot) => {
+                const table = document.getElementById("babyListTable");
+                table.innerHTML = `
+                    <tr>
+                        <th>Picture</th>
+                        <th>Description & Link</th>
+                        <th>Action</th>
+                    </tr>
+                `; // Reset table header
+                
+                snapshot.forEach((childSnapshot) => {
+                    const key = childSnapshot.key;
+                    const data = childSnapshot.val();
+                    
+                    // Create table row
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td><img src="${data.image}" alt="Item Image" width="60%"></td>
+                        <td><a href="${data.link}" style="color: white;">Link</a> - ${data.description}</td>
+                        <td><button onclick="removeItem('${key}')">I bought this</button></td>
+                    `;
+                    table.appendChild(row);
+                });
+            });
+        }
+	    
+        // Function to remove an item from Firebase
+        function removeItem(itemId) {
+            if (confirm("Are you sure you bought this item?")) {
+                database.ref("babylist/" + itemId).remove()
+                    .then(() => console.log("Item removed successfully"))
+                    .catch((error) => console.error("Error removing item: ", error));
+            }
+        }
+
+	// Load items on page load
+        loadBabyList();
+    </script>
+
+</body>
+</html>

@@ -10,8 +10,8 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
 
 // Reference to the 'babyList' node in Firebase
 const babyListRef = database.ref("babylist");

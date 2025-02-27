@@ -77,9 +77,16 @@
         row.innerHTML = `
           <td><img src="${data.image}" alt="Item Image" width="60%"></td>
           <td><a href="${data.link}" style="color: white;">Link</a> - ${data.description}</td>
-          <td><button onclick="removeItem('${key}')">I bought this</button></td>
+          <td><button class="remove-btn" data-key="${key}">I bought this</button></td>
         `;
         table.appendChild(row);
+      });
+      // Attach event listeners to all "I bought this" buttons
+      document.querySelectorAll(".remove-btn").forEach(button => {
+        button.addEventListener("click", function () {
+          const itemId = this.getAttribute("data-key");
+          removeItem(itemId);
+        });
       });
     });
   }
@@ -92,6 +99,9 @@
         .catch((error) => console.error("Error removing item: ", error));
     }
   }
+
+  // Make removeItem globally accessible
+  window.removeItem = removeItem;
 
   // Load the list on page load
   loadBabyList();

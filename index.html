@@ -75,7 +75,7 @@
 
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td><img src="${data.image}" alt="Item Image" width="60%"></td>
+          <td><img src="${encodeURIComponent(data.image)}" alt="Item Image" width="60%" onerror="this.src='fallback.jpg';"></td>
           <td><a href="${data.link}" style="color: white;">Link</a> - ${data.description}</td>
           <td><button class="remove-btn" data-key="${key}">I bought this</button></td>
         `;
